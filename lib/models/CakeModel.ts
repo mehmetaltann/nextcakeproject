@@ -1,7 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { Cake } from "../types/all";
-import { MaterialSchema } from "./MaterialModel";
-import { RecipeSchema } from "./RecipeModel";
 
 const CakeSchema = new Schema<Cake>({
   name: {
@@ -12,28 +10,30 @@ const CakeSchema = new Schema<Cake>({
     type: String,
     required: true,
   },
-  desription: String,
+  description: {
+    type: String,
+  },
   materials: [
     {
-      mtNumber: {
-        type: Number,
-        required: true,
+      material: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Material",
       },
-      MaterialSchema,
+      quantity: { type: Number, required: true },
     },
   ],
   recipes: [
     {
-      rpNumber: {
-        type: Number,
-        required: true,
+      recipe: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Recipe",
       },
-      RecipeSchema,
+      quantity: { type: Number, required: true },
     },
   ],
 });
 
 const CakeModel: Model<Cake> =
-  mongoose.models?.cake || mongoose.model<Cake>("cake", CakeSchema);
+  mongoose.models.cake || mongoose.model<Cake>("cake", CakeSchema);
 
 export default CakeModel;

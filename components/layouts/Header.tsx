@@ -26,9 +26,9 @@ interface Page {
 
 const pages: Page[] = [
   { title: "Anasayfa", link: "/" },
-  { title: "Ürünler", link: "urunler" },
-  { title: "Tarifler", link: "tarifler" },
-  { title: "Malzemeler", link: "malzemeler" },
+  { title: "Ürünler", link: "cakes" },
+  { title: "Tarifler", link: "recipes" },
+  { title: "Malzemeler", link: "materials" },
 ];
 
 const Header = () => {

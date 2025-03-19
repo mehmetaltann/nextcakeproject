@@ -1,5 +1,5 @@
 import CircularProgress from "@mui/material/CircularProgress";
-import React from "react";
+import { JSX } from "react";
 import { Box } from "@mui/material";
 
 export function Loader(): JSX.Element {

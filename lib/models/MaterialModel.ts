@@ -1,29 +1,35 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { Material } from "../types/all";
 
-export const MaterialSchema = new Schema<Material>({
-  name: {
-    type: String,
-    required: true,
+export const MaterialSchema = new Schema<Material>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    unit: {
+      type: String,
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: false,
+    },
   },
-  type: {
-    type: String,
-    required: true,
-  },
-  unit: {
-    type: String,
-    required: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  desription: String,
-});
+  { timestamps: true }
+);
 
 const MaterialModel: Model<Material> =
   mongoose.models?.material ||

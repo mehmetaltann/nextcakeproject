@@ -5,13 +5,13 @@ export type Material = {
   unit: string;
   amount: number;
   price: number;
-  desription?: string;
+  description?: string;
 };
 
 export type Recipe = {
   _id: string;
   name: string;
-  desription?: string;
+  description?: string;
   materials?: Material[];
 };
 
@@ -19,7 +19,16 @@ export type Cake = {
   _id: string;
   name: string;
   size: string;
-  desription: string;
+  description: string;
   materials?: Material[];
   recipes?: Recipe[];
+};
+
+export type Parameter = {
+  _id: string;
+  variant: string;
+  content: Array<{
+    title: string;
+    value: string;
+  }>;
 };
