@@ -18,6 +18,7 @@ const CakeSchema = new Schema<Cake>({
       material: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Material",
+        required: true,
       },
       quantity: { type: Number, required: true },
     },
@@ -27,6 +28,7 @@ const CakeSchema = new Schema<Cake>({
       recipe: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Recipe",
+        required: true,
       },
       quantity: { type: Number, required: true },
     },

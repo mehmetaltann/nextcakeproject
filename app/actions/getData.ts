@@ -5,15 +5,16 @@ import MaterialModel from "@/lib/models/MaterialModel";
 import ParameterModel from "@/lib/models/ParameterModel";
 import RecipeModel from "@/lib/models/RecipeModel";
 import { Material } from "@/lib/types/all";
+import { cakeQuery, recipeQuery } from "./queries";
 
 export const getMaterials = async () => {
   try {
     await dbConnect();
-    const materials = await MaterialModel.find({});
+    const materials = await MaterialModel.find({}).lean();
     const filteredAllItems: Material[] = JSON.parse(JSON.stringify(materials));
-    return filteredAllItems as Material[];
+    return filteredAllItems;
   } catch (error) {
-    console.error("Materyaller alınırken bir hata oluştu:", error);
+    console.error("Malzemeler alınırken bir hata oluştu:", error);
     return [];
   }
 };
@@ -21,14 +22,11 @@ export const getMaterials = async () => {
 export const getRecipes = async () => {
   try {
     await dbConnect();
-    const recipes = await RecipeModel.find({}).populate({
-      path: "materials.material",
-      model: "Material",
-    });
+    const recipes = await RecipeModel.aggregate(recipeQuery);
     const filteredAllRecipes = JSON.parse(JSON.stringify(recipes));
     return filteredAllRecipes;
   } catch (error) {
-    console.error("Tarifler ve malzemeler alınırken bir hata oluştu:", error);
+    console.error("Tarifler alınırken bir hata oluştu:", error);
     return [];
   }
 };
@@ -36,22 +34,12 @@ export const getRecipes = async () => {
 export const getCakes = async () => {
   try {
     await dbConnect();
-    const cakes = await CakeModel.find({})
-      .populate({
-        path: "materials.material",
-        model: "Material",
-      })
-      .populate({
-        path: "recipes.recipe",
-        model: "Recipe",
-      });
+    const cakes = await CakeModel.aggregate(cakeQuery);
+    console.log(cakes);
     const filteredAllCakes = JSON.parse(JSON.stringify(cakes));
     return filteredAllCakes;
   } catch (error) {
-    console.error(
-      "Kekler, tarifler ve malzemeler alınırken bir hata oluştu:",
-      error
-    );
+    console.error("Pastalar alınırken bir hata oluştu:", error);
     return [];
   }
 };

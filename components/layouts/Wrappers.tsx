@@ -14,7 +14,7 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
   return (
     <Box sx={{ height: "90vh", overflow: "auto" }}>
       <Container
-        maxWidth={false}
+        fixed
         sx={{ mt: 2, width: { xs: "100%", xl: "90%" }, ...conSx }}
         {...rest}
       >

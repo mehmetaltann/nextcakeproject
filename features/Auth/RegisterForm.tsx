@@ -12,7 +12,7 @@ import {
   Box,
   Container,
 } from "@mui/material";
-import { addUser } from "@/app/actions/action";
+import { addUser } from "@/app/actions/addData";
 
 const RegisterForm = () => {
   const [formState, formAction] = useActionState(addUser, null);

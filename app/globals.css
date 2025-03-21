@@ -10,3 +10,23 @@ input:-webkit-autofill:active {
   overflow-x: auto;
   white-space: nowrap;
 }
+/* Masaüstü cihazlar için (768px ve üstü) */
+@media (min-width: 768px) {
+  .collapse-content {
+    max-height: 300px;  /* İçeriğin yarısını göstermek için max-height değeri */
+    overflow: hidden;  /* Taşan kısmı gizlemek için */
+    transition: max-height 0.3s ease;  /* Geçiş efekti eklemek için */
+  }
+
+  .collapse-content.open {
+    max-height: 1000px;  /* Açıldığında tüm içeriği göstermek için */
+  }
+}
+
+/* Mobil cihazlar için (768px altı) */
+@media (max-width: 768px) {
+  .collapse-content {
+    max-height: none;  /* Mobilde tüm içeriği gösterecek şekilde */
+    overflow: visible;
+  }
+}

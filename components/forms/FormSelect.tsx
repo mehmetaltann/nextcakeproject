@@ -2,13 +2,12 @@ import { TextField, TextFieldProps } from "@mui/material";
 import { FormikProps, FormikValues } from "formik";
 import React from "react";
 
-// Prop'lar için TypeScript interface'i
 interface FormSelectProps
   extends Omit<TextFieldProps, "name" | "value" | "onChange"> {
   form: FormikProps<FormikValues>;
   field: {
     name: string;
-    value: any;
+    value: string;
   };
   children: React.ReactNode;
 }
@@ -25,7 +24,6 @@ const FormSelect: React.FC<FormSelectProps> = ({
   return (
     <TextField
       select
-      type="text"
       sx={{ width: "100%" }}
       name={name}
       value={value ?? ""}

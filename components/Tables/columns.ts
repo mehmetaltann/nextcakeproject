@@ -87,8 +87,10 @@ export const numberColumn = (
     align: "left",
     type: "number",
     filterable: false,
-    valueFormatter: ({ value }) =>
-      `${value !== undefined ? value.toFixed() : "N/A"}`,
+    renderCell: (params) => {
+      const value = params.value !== undefined ? params.value : 0;
+      return `${value.toFixed()}`;
+    },
     ...rest,
   };
 };

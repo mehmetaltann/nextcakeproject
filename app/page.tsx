@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <PageWrapper maxW="lg">Deneme</PageWrapper>
+      <PageWrapper>Deneme</PageWrapper>
     </>
   );
 }
