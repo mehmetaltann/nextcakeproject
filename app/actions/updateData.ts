@@ -2,6 +2,7 @@
 import dbConnect from "@/lib/db/dbConnect";
 import MaterialModel from "@/lib/models/MaterialModel";
 import { Material } from "@/lib/types/all";
+import { revalidatePath } from "next/cache";
 
 export const updateMaterial = async (
   updateData: Material
@@ -14,11 +15,15 @@ export const updateMaterial = async (
       return { msg: "Material bulunamadı", status: false };
     }
 
-    const updatedMaterial = await MaterialModel.findByIdAndUpdate(
+    await MaterialModel.findByIdAndUpdate(
       updateData._id,
       { $set: updateData },
       { new: true, runValidators: true }
     );
+    revalidatePath("/recipes");
+    revalidatePath("/cakes");
+    revalidatePath("/materials");
+    revalidatePath("/");
 
     return {
       msg: "Material başarıyla güncellendi",

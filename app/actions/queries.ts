@@ -2,7 +2,7 @@ export const recipeQuery = [
   {
     $lookup: {
       from: "materials",
-      localField: "materials._id",
+      localField: "materials.materialId",
       foreignField: "_id",
       as: "mat",
     },
@@ -20,7 +20,7 @@ export const recipeQuery = [
                 $first: {
                   $filter: {
                     input: "$mat",
-                    cond: { $eq: ["$$this._id", "$$m._id"] },
+                    cond: { $eq: ["$$this._id", "$$m.materialId"] },
                   },
                 },
               },
@@ -37,14 +37,14 @@ export const recipeQuery = [
           input: "$materials",
           as: "m",
           in: {
-            id: "$$m._id",
+            id: "$$m.materialId",
             name: "$$m.name",
             unit: "$$m.unit",
-            amount: "$$m.mtNumber",
+            amount: "$$m.quantity",
             cost: {
               $multiply: [
                 { $divide: ["$$m.price", "$$m.amount"] },
-                "$$m.mtNumber",
+                "$$m.quantity",
               ],
             },
           },
@@ -67,7 +67,7 @@ export const cakeQuery = [
   {
     $lookup: {
       from: "materials",
-      localField: "materials._id",
+      localField: "materials.materialId",
       foreignField: "_id",
       as: "mat",
     },
@@ -85,7 +85,7 @@ export const cakeQuery = [
                 $first: {
                   $filter: {
                     input: "$mat",
-                    cond: { $eq: ["$$this._id", "$$m._id"] },
+                    cond: { $eq: ["$$this._id", "$$m.materialId"] },
                   },
                 },
               },
@@ -102,14 +102,14 @@ export const cakeQuery = [
           input: "$materials",
           as: "m",
           in: {
-            id: "$$m._id",
+            id: "$$m.materialId",
             name: "$$m.name",
             unit: "$$m.unit",
-            mtNumber: "$$m.mtNumber",
+            quantity: "$$m.quantity",
             cost: {
               $multiply: [
                 { $divide: ["$$m.price", "$$m.amount"] },
-                "$$m.mtNumber",
+                "$$m.quantity",
               ],
             },
           },
@@ -119,26 +119,26 @@ export const cakeQuery = [
   },
   {
     $lookup: {
-      from: "semiproducts",
-      localField: "semiproducts._id",
+      from: "recipes",
+      localField: "recipes.recipeId",
       foreignField: "_id",
-      as: "sp",
+      as: "rcp",
     },
   },
   {
     $addFields: {
-      semiproducts: {
+      recipes: {
         $map: {
-          input: "$semiproducts",
-          as: "s",
+          input: "$recipes",
+          as: "r",
           in: {
             $mergeObjects: [
-              "$$s",
+              "$$r",
               {
                 $first: {
                   $filter: {
-                    input: "$sp",
-                    cond: { $eq: ["$$this._id", "$$s._id"] },
+                    input: "$rcp",
+                    cond: { $eq: ["$$this._id", "$$r.recipeId"] },
                   },
                 },
               },
@@ -151,34 +151,34 @@ export const cakeQuery = [
   {
     $lookup: {
       from: "materials",
-      localField: "semiproducts.materials._id",
+      localField: "recipes.materials.materialId",
       foreignField: "_id",
-      as: "mtsp",
+      as: "mtRcp",
     },
   },
   {
     $addFields: {
-      semiproducts: {
+      recipes: {
         $map: {
-          input: "$semiproducts",
-          as: "s",
+          input: "$recipes",
+          as: "r",
           in: {
-            spNumber: "$$s.spNumber",
-            id: "$$s._id",
-            name: "$$s.name",
-            description: "$$s.description",
+            quantity: "$$r.quantity",
+            id: "$$r._id",
+            name: "$$r.name",
+            description: "$$r.description",
             materials: {
               $map: {
-                input: "$$s.materials",
-                as: "sm",
+                input: "$$r.materials",
+                as: "rm",
                 in: {
                   $mergeObjects: [
-                    "$$sm",
+                    "$$rm",
                     {
                       $first: {
                         $filter: {
-                          input: "$mtsp",
-                          cond: { $eq: ["$$this._id", "$$sm._id"] },
+                          input: "$mtRcp",
+                          cond: { $eq: ["$$this._id", "$$rm.materialId"] },
                         },
                       },
                     },
@@ -193,28 +193,28 @@ export const cakeQuery = [
   },
   {
     $addFields: {
-      semiproducts: {
+      recipes: {
         $map: {
-          input: "$semiproducts",
-          as: "s",
+          input: "$recipes",
+          as: "r",
           in: {
-            spNumber: "$$s.spNumber",
-            id: "$$s.id",
-            name: "$$s.name",
-            description: "$$s.description",
+            quantity:  "$$r.quantity",
+            id: "$$r.id",
+            name: "$$r.name",
+            description: "$$r.description",
             materials: {
               $map: {
-                input: "$$s.materials",
-                as: "sm",
+                input: "$$r.materials",
+                as: "rm",
                 in: {
-                  id: "$$sm._id",
-                  name: "$$sm.name",
-                  unit: "$$sm.unit",
-                  mtNumber: "$$sm.mtNumber",
+                  id: "$$rm.materialId",
+                  name: "$$rm.name",
+                  unit: "$$rm.unit",
+                  quantity: "$$rm.quantity",
                   cost: {
                     $multiply: [
-                      { $divide: ["$$sm.price", "$$sm.amount"] },
-                      "$$sm.mtNumber",
+                      { $divide: ["$$rm.price", "$$rm.amount"] },
+                      "$$rm.quantity",
                     ],
                   },
                 },
@@ -227,18 +227,18 @@ export const cakeQuery = [
   },
   {
     $addFields: {
-      semiproducts: {
+      recipes: {
         $map: {
-          input: "$semiproducts",
-          as: "s",
+          input: "$recipes",
+          as: "r",
           in: {
-            spNumber: "$$s.spNumber",
-            id: "$$s.id",
-            name: "$$s.name",
-            description: "$$s.description",
-            materials: "$$s.materials",
+            quantity:  "$$r.quantity",
+            _id: "$$r.id",
+            name: "$$r.name",
+            description: "$$r.description",
+            materials: "$$r.materials",
             materialcost: {
-              $multiply: [{ $sum: "$$s.materials.cost" }, "$$s.spNumber"],
+              $multiply: [{ $sum: "$$r.materials.cost" }, "$$r.quantity"],
             },
           },
         },
@@ -248,20 +248,15 @@ export const cakeQuery = [
   {
     $project: {
       _id: 1,
-      deneme: 1,
       name: 1,
       size: 1,
-      spNumber: 1,
       description: 1,
       materials: 1,
-      semiproducts: 1,
+      recipes: 1,
       totalmaterialscost: { $sum: "$materials.cost" },
-      totalsemiproductscost: { $sum: "$semiproducts.materialcost" },
+      totalrecipescost: { $sum: "$recipes.materialcost" },
       totalCost: {
-        $sum: [
-          { $sum: "$materials.cost" },
-          { $sum: "$semiproducts.materialcost" },
-        ],
+        $sum: [{ $sum: "$materials.cost" }, { $sum: "$recipes.materialcost" }],
       },
     },
   },

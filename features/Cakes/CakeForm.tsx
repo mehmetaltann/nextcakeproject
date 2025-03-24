@@ -59,9 +59,9 @@ const CakeForm = ({ setOpenModel }: CakeFormProps) => {
       const res = await addCake(newRecord);
       handleResponseMsg(res);
       setOpenModel(false);
-      setSubmitting(false);
     } catch (error) {
       toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
       setSubmitting(false);
     }
   }
@@ -83,8 +83,8 @@ const CakeForm = ({ setOpenModel }: CakeFormProps) => {
             />
             <Field name="size" component={FormSelect} label="Boyut">
               {parameters
-                .filter((item) => item.variant === "Pasta Boyutu")[0]
-                .content?.map(({ title }, index) => (
+                ?.find((item) => item.variant === "Pasta Boyutu")
+                ?.content?.map(({ title }, index) => (
                   <MenuItem value={title} key={index}>
                     {title}
                   </MenuItem>

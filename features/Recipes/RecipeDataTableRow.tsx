@@ -2,14 +2,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ModalButton from "@/components/modals/ModalButton";
+import MaterialToRecipeForm from "./MaterialToRecipeForm";
 import { Fragment, useState } from "react";
 import { RecipeExtented } from "@/lib/types/all";
 import { handleResponseMsg } from "@/utils/toast-helper";
 import { toast } from "react-toastify";
-import {
-  deleteMaterialFromRecipe,
-  deleteRecipe,
-} from "@/app/actions/deleteData";
 import {
   Table,
   IconButton,
@@ -20,7 +17,10 @@ import {
   TableCell,
   Collapse,
 } from "@mui/material";
-import MaterialToRecipeForm from "./MaterialToRecipeForm";
+import {
+  deleteMaterialFromRecipe,
+  deleteRecipe,
+} from "@/app/actions/deleteData";
 
 interface RecipeDataTableRowProps {
   data: RecipeExtented;
@@ -36,7 +36,11 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
     <Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell width="2%">
-          <IconButton size="small" onClick={() => setOpen(!open)}>
+          <IconButton
+            color="secondary"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
@@ -86,9 +90,7 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
                     <TableCell align="left" width="1%">
                       No
                     </TableCell>
-                    <TableCell align="left" width="12%">
-                      İsim
-                    </TableCell>
+                    <TableCell align="left">İsim</TableCell>
                     <TableCell align="left">Miktar</TableCell>
                     <TableCell align="left">Birim</TableCell>
                     <TableCell align="left">Maliyet</TableCell>
@@ -97,7 +99,7 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
                 </TableHead>
                 <TableBody>
                   {materials?.map(
-                    ({ id: materialId, name, unit, amount }, index) => (
+                    ({ id: materialId, name, unit, amount, cost }, index) => (
                       <TableRow
                         key={materialId}
                         sx={{
@@ -107,19 +109,18 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
                         <TableCell component="th" scope="row" width="1%">
                           {index + 1}
                         </TableCell>
-                        <TableCell component="th" scope="row" width="12%">
+                        <TableCell component="th" scope="row">
                           {name}
                         </TableCell>
-                        <TableCell width="3%">{amount}</TableCell>
-                        <TableCell width="3%">{unit}</TableCell>
+                        <TableCell>{amount}</TableCell>
+                        <TableCell>{unit}</TableCell>
                         <TableCell
                           align="left"
                           sx={{ color: "secondary.main", fontWeight: 500 }}
-                          width="15%"
                         >
-                          {`${totalCost.toFixed(2)} TL`}
+                          {`${cost.toFixed(2)} TL`}
                         </TableCell>
-                        <TableCell align="left" width="5%">
+                        <TableCell>
                           <IconButton
                             size="small"
                             color="secondary"
@@ -151,7 +152,7 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
                       style={{ borderBottom: "none" }}
                     >
                       <ModalButton
-                        color="primary"
+                        color="secondary"
                         endIconLogo="addnew"
                         buttonTitle="Yeni Malzeme Ekle"
                         minW="20vh"

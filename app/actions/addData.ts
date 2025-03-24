@@ -92,26 +92,18 @@ export const addMaterialToRecipe = async (
   try {
     await dbConnect();
 
-    const recipe = await RecipeModel.findById(recipeId);
-    if (!recipe) {
-      return { msg: "Recipe bulunamadı", status: false };
-    }
-
-    if (!recipe.materials) {
-      recipe.materials = [];
-    }
-
-    recipe.materials.push({
-      material: new mongoose.Types.ObjectId(materialId),
+    const filter = { _id: recipeId };
+    const updateData = {
+      materialId,
       quantity: materialNumber,
+    };
+
+    await RecipeModel.findByIdAndUpdate(filter, {
+      $push: { materials: updateData },
     });
 
-    await recipe.save();
     revalidatePath("/recipes");
-    return {
-      msg: "Material başarıyla tarife içerisine eklendi",
-      status: true,
-    };
+    return { msg: "Material başarıyla tarife eklendi", status: true };
   } catch (error) {
     console.error("Recipe içerisine material eklenirken hata oluştu:", error);
     return {
@@ -130,30 +122,26 @@ export const addMaterialToCake = async (
 ): Promise<{ msg: string; status: boolean }> => {
   try {
     await dbConnect();
-    const cake = await CakeModel.findById(cakeId);
-    if (!cake) {
-      return { msg: "Cake bulunamadı", status: false };
-    }
 
-    if (!cake.materials) {
-      cake.materials = [];
-    }
-
-    cake.materials.push({
-      material: new mongoose.Types.ObjectId(materialId),
+    const filter = { _id: cakeId };
+    const updateData = {
+      materialId,
       quantity: materialQuantity,
+    };
+
+    await CakeModel.findByIdAndUpdate(filter, {
+      $push: { materials: updateData },
     });
 
-    await cake.save();
     revalidatePath("/cakes");
     return {
-      msg: "Material başarıyla Cake içerisine eklendi",
+      msg: "Malzeme başarıyla Pasta içerisine eklendi",
       status: true,
     };
   } catch (error) {
-    console.error("Cake içerisine material eklenirken hata oluştu:", error);
+    console.error("Pasta içerisine malzeme eklenirken hata oluştu:", error);
     return {
-      msg: `Material eklenirken hata oluştu: ${
+      msg: `Malzeme eklenirken hata oluştu: ${
         error instanceof Error ? error.message : "Bilinmeyen hata"
       }`,
       status: false,
@@ -168,35 +156,25 @@ export const addRecipeToCake = async (
 ): Promise<{ msg: string; status: boolean }> => {
   try {
     await dbConnect();
-    const cake = await CakeModel.findById(cakeId);
-    if (!cake) {
-      return { msg: "Cake bulunamadı", status: false };
-    }
-
-    const recipe = await RecipeModel.findById(recipeId);
-    if (!recipe) {
-      return { msg: "Recipe bulunamadı", status: false };
-    }
-
-    if (!cake.recipes) {
-      cake.recipes = [];
-    }
-
-    cake.recipes.push({
-      recipe: new mongoose.Types.ObjectId(recipeId),
+    const filter = { _id: cakeId };
+    const updateData = {
+      recipeId,
       quantity,
+    };
+
+    await CakeModel.findByIdAndUpdate(filter, {
+      $push: { recipes: updateData },
     });
 
-    await cake.save();
     revalidatePath("/cakes");
     return {
-      msg: "Recipe başarıyla cake içerisine eklendi",
+      msg: "Tarif başarıyla cake içerisine eklendi",
       status: true,
     };
   } catch (error) {
-    console.error("Cake içerisine recipe eklenirken hata oluştu:", error);
+    console.error("Pasta içerisine tarif eklenirken hata oluştu:", error);
     return {
-      msg: `Recipe eklenirken hata oluştu: ${
+      msg: `Tarif eklenirken hata oluştu: ${
         error instanceof Error ? error.message : "Bilinmeyen hata"
       }`,
       status: false,

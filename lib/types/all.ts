@@ -61,6 +61,36 @@ export type CakeWithoutId = {
   recipes?: { recipe: Recipe; quantity: number }[];
 };
 
+export type CakeExtented = {
+  _id: string;
+  name: string;
+  size?: string;
+  description: string;
+  materials?: {
+    amount: number;
+    quantity: number;
+    cost: number;
+    id: string;
+    name: string;
+    unit: string;
+  }[];
+  recipes?: {
+    name: string;
+    description?: string;
+    quantity: number;
+    materials?: {
+      amount: number;
+      cost: number;
+      id: string;
+      name: string;
+      unit: string;
+    }[];
+  };
+  totalmaterialscost: Number;
+  totalrecipescost: Number;
+  totalCost: Number;
+};
+
 export type Parameter = {
   _id: string;
   variant: string;

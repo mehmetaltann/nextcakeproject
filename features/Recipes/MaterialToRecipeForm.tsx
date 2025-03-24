@@ -3,21 +3,13 @@ import SendIcon from "@mui/icons-material/Send";
 import FormTextField from "../../components/forms/FormTextField";
 import { Form, Formik, Field, FormikHelpers } from "formik";
 import { Autocomplete } from "formik-mui";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getMaterials } from "@/app/actions/getData";
 import { handleResponseMsg } from "@/utils/toast-helper";
 import { toast } from "react-toastify";
 import { addMaterialToRecipe } from "@/app/actions/addData";
 import { Material } from "@/lib/types/all";
-import {
-  Stack,
-  Button,
-  TextField,
-  FilledTextFieldProps,
-  OutlinedTextFieldProps,
-  StandardTextFieldProps,
-  TextFieldVariants,
-} from "@mui/material";
+import { Stack, Button, TextField } from "@mui/material";
 
 interface MaterialToRecipeFormProps {
   setOpenModel: (open: boolean) => void;
@@ -35,7 +27,7 @@ const MaterialToRecipeForm = ({
       const response = await getMaterials();
       setMaterials(response);
     } catch (error) {
-      console.error("Parametre verileri yüklenirken hata oluştu:", error);
+      console.error("Malzeme verileri yüklenirken hata oluştu:", error);
     }
   }, []);
 
@@ -44,9 +36,10 @@ const MaterialToRecipeForm = ({
   }, [fetchMaterials]);
 
   const validateSchema = Yup.object().shape({
+    title: Yup.object().nullable().required("Malzeme seçmek zorunludur"),
     amount: Yup.number()
-      .required("Gerekli")
-      .moreThan(0, "Sıfırdan Büyük Olmalıdır"),
+      .required("Miktar gerekli")
+      .moreThan(0, "Sıfırdan büyük olmalıdır"),
   });
 
   async function submitHandler(
@@ -56,14 +49,14 @@ const MaterialToRecipeForm = ({
     try {
       const res = await addMaterialToRecipe(
         recipeId,
-        values.title.id,
+        values.title?._id,
         values.amount
       );
       handleResponseMsg(res);
       setOpenModel(false);
-      setSubmitting(false);
     } catch (error) {
       toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
       setSubmitting(false);
     }
   }
@@ -84,20 +77,14 @@ const MaterialToRecipeForm = ({
               name="title"
               component={Autocomplete}
               options={materials}
-              getOptionLabel={(option: { name: any }) => option.name || ""}
-              isOptionEqualToValue={(option: { id: any }, value: { id: any }) =>
-                option.id === value.id
+              getOptionLabel={(option: Material) => option.name || ""}
+              isOptionEqualToValue={(option: any, value: any) =>
+                option._id === value?._id
               }
-              renderInput={(
-                params: JSX.IntrinsicAttributes & {
-                  variant?: TextFieldVariants | undefined;
-                } & Omit<
-                    | FilledTextFieldProps
-                    | OutlinedTextFieldProps
-                    | StandardTextFieldProps,
-                    "variant"
-                  >
-              ) => (
+              onChange={(_: any, selectedOption: any) => {
+                setFieldValue("title", selectedOption || null);
+              }}
+              renderInput={(params: any) => (
                 <TextField
                   {...params}
                   name="title"

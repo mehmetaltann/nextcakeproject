@@ -53,7 +53,7 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static" color="primary">
+    <AppBar position="static" color="secondary">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <CakeIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />

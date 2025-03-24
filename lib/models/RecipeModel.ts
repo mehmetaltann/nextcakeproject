@@ -11,14 +11,14 @@ export const RecipeSchema = new Schema<Recipe>({
   },
   materials: [
     {
-      material: {
+      materialId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Material", 
+        ref: "Material",
         required: true,
       },
       quantity: {
         type: Number,
-        required: true, 
+        required: true,
       },
     },
   ],

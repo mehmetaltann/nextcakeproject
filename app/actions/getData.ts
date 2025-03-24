@@ -35,7 +35,6 @@ export const getCakes = async () => {
   try {
     await dbConnect();
     const cakes = await CakeModel.aggregate(cakeQuery);
-    console.log(cakes);
     const filteredAllCakes = JSON.parse(JSON.stringify(cakes));
     return filteredAllCakes;
   } catch (error) {

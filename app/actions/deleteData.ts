@@ -6,12 +6,13 @@ import ParameterModel from "@/lib/models/ParameterModel";
 import RecipeModel from "@/lib/models/RecipeModel";
 import { revalidatePath } from "next/cache";
 
-export const deleteMaterial = async (materialId: string) => {
+export const deleteMaterial = async (
+  materialId: string
+): Promise<{ msg: string; status: boolean }> => {
   try {
     await dbConnect();
     const result = await MaterialModel.findByIdAndDelete(materialId);
     if (!result) {
-      console.error("Material bulunamadı veya silinemedi.");
       return { status: false, msg: "Material bulunamadı" };
     }
     revalidatePath("/materials");
@@ -25,36 +26,35 @@ export const deleteMaterial = async (materialId: string) => {
   }
 };
 
-export const deleteRecipe = async (recipeId: string) => {
+export const deleteRecipe = async (
+  recipeId: string
+): Promise<{ msg: string; status: boolean }> => {
   try {
     await dbConnect();
-    const recipe = await RecipeModel.findById(recipeId).populate(
-      "materials.material"
-    );
+
+    const recipe = await RecipeModel.findById(recipeId);
     if (!recipe) {
-      console.error("Recipe bulunamadı.");
       return { status: false, msg: "Recipe bulunamadı" };
     }
-    if (recipe.materials && recipe.materials.length > 0) {
-      console.error("Bu Recipe'de material bulunduğu için silinemez.");
+
+    if ((recipe.materials ?? []).length > 0) {
       return {
         status: false,
         msg: "Bu Recipe'de material bulunduğu için silinemez.",
       };
     }
-    const result = await RecipeModel.findByIdAndDelete(recipeId);
-    if (!result) {
-      console.error("Recipe silinirken bir hata oluştu.");
-      return { status: false, msg: "Recipe silinirken bir hata oluştu." };
+
+    const deletedRecipe = await RecipeModel.findByIdAndDelete(recipeId);
+    if (!deletedRecipe) {
+      return { status: false, msg: "Recipe zaten silinmiş veya bulunamadı." };
     }
+
     revalidatePath("/recipes");
+
     return { status: true, msg: "Recipe başarıyla silindi." };
   } catch (error) {
-    console.error("Recipe silinirken bir hata oluştu:", error);
-    return {
-      status: false,
-      msg: "Silme işlemi sırasında bir hata oluştu.",
-    };
+    console.error("Recipe silme hatası:", error);
+    return { status: false, msg: "Silme işlemi sırasında bir hata oluştu." };
   }
 };
 
@@ -65,7 +65,6 @@ export const deleteCake = async (cakeId: string) => {
       .populate("recipes.recipe")
       .populate("materials.material");
     if (!cake) {
-      console.error("Cake bulunamadı.");
       return { status: false, msg: "Cake bulunamadı" };
     }
     if (
@@ -103,74 +102,45 @@ export const deleteMaterialFromRecipe = async (
 ) => {
   try {
     await dbConnect();
+    const filter = { _id: recipeId };
+    const updateData = {
+      materialId,
+    };
 
-    const recipe = await RecipeModel.findById(recipeId);
-    if (!recipe) {
-      return { status: false, msg: "Recipe bulunamadı." };
-    }
+    await RecipeModel.findByIdAndUpdate(filter, {
+      $pull: { materials: updateData },
+    });
 
-    if (!recipe.materials || recipe.materials.length === 0) {
-      return {
-        status: false,
-        msg: "Recipe içerisinde material bulunmuyor.",
-      };
-    }
-
-    const materialIndex = recipe.materials.findIndex(
-      (material) => material.material.toString() === materialId
-    );
-    if (materialIndex === -1) {
-      return {
-        status: false,
-        msg: "Bu material Recipe içinde bulunamadı.",
-      };
-    }
-
-    recipe.materials.splice(materialIndex, 1);
-    await recipe.save();
     revalidatePath("/recipes");
-    return { status: true, msg: "Material başarıyla silindi." };
+    revalidatePath("/cakes");
+    revalidatePath("/");
+    return { status: true, msg: "Malzeme başarıyla silindi." };
   } catch (error) {
-    console.error("Material silinirken bir hata oluştu:", error);
-    return { status: false, msg: "Material silinirken bir hata oluştu." };
+    console.error("Malzeme silinirken bir hata oluştu:", error);
+    return { status: false, msg: "Malzeme silinirken bir hata oluştu." };
   }
 };
 
-export const removeMaterialFromCake = async (
+export const deleteMaterialFromCake = async (
   cakeId: string,
   materialId: string
 ) => {
   try {
-    const cake = await CakeModel.findById(cakeId);
-    if (!cake) {
-      return { status: false, msg: "Cake bulunamadı" };
-    }
+    await dbConnect();
+    const filter = { _id: cakeId };
+    const updateData = {
+      materialId,
+    };
 
-    if (!cake.materials || cake.materials.length === 0) {
-      return {
-        status: false,
-        msg: "Bu Cake içerisinde herhangi bir Material bulunmamaktadır.",
-      };
-    }
+    await CakeModel.findByIdAndUpdate(filter, {
+      $pull: { materials: updateData },
+    });
 
-    const updatedMaterials = cake.materials.filter(
-      (mat: any) => mat.material.toString() !== materialId
-    );
-
-    if (updatedMaterials.length === cake.materials.length) {
-      return {
-        status: false,
-        msg: "Material bulunamadı veya zaten silinmiş.",
-      };
-    }
-
-    cake.materials = updatedMaterials;
-    await cake.save();
     revalidatePath("/cakes");
-    return { status: true, msg: "Material başarıyla silindi" };
+    return { status: true, msg: "Malzeme başarıyla silindi" };
   } catch (error) {
-    console.error("Material silme hatası:", error);
-    return { status: false, msg: "Material silinirken hata oluştu" };
+    console.error("Malzeme silme hatası:", error);
+    return { status: false, msg: "Malzeme silinirken hata oluştu" };
   }
 };
 
@@ -180,32 +150,18 @@ export const deleteRecipeFromCake = async (
 ) => {
   try {
     await dbConnect();
-
-    const cake = await CakeModel.findById(cakeId).populate("recipes.recipe");
-
-    if (!cake) {
-      return { status: false, msg: "Cake bulunamadı." };
-    }
-
-    if (!cake.recipes || cake.recipes.length === 0) {
-      return { status: false, msg: "Bu Cake içinde Recipe bulunmuyor." };
-    }
-
-    const recipeIndex = cake.recipes.findIndex(
-      (r) => r.recipe._id.toString() === recipeId
-    );
-
-    if (recipeIndex === -1) {
-      return { status: false, msg: "Bu Recipe Cake içinde bulunamadı." };
-    }
-
-    cake.recipes.splice(recipeIndex, 1);
-    await cake.save();
+    const filter = { _id: cakeId };
+    const updateData = {
+      recipeId,
+    };
+    await CakeModel.findByIdAndUpdate(filter, {
+      $pull: { recipes: updateData },
+    });
     revalidatePath("/cakes");
-    return { status: true, msg: "Recipe başarıyla Cake içinden silindi." };
+    return { status: true, msg: "Tarif başarıyla Pasta içinden silindi." };
   } catch (error) {
-    console.error("Recipe silinirken bir hata oluştu:", error);
-    return { status: false, msg: "Recipe silinirken bir hata oluştu." };
+    console.error("Tarif silinirken bir hata oluştu:", error);
+    return { status: false, msg: "Tarif silinirken bir hata oluştu." };
   }
 };
 
@@ -240,3 +196,10 @@ export const deleteParameter = async (
     };
   }
 };
+function findByIdAndUpdate(
+  SemiProductSchema: any,
+  filter: { _id: string },
+  arg2: { $pull: { materials: { _id: string } } }
+) {
+  throw new Error("Function not implemented.");
+}

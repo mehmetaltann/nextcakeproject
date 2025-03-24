@@ -47,7 +47,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
   title,
   minHeight = { md: "40vh", xs: "40vh", lg: "40vh" },
   height = { md: "70vh", xs: "80vh" },
-  color = "primary",
+  color = "secondary",
   endIconLogo = "send",
   buttonTitle = "EKLE",
   variant = "outlined",
