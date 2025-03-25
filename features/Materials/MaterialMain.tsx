@@ -2,10 +2,9 @@
 import PageFormContainer from "@/components/PageFormContainer";
 import MaterialForm from "./MaterialForm";
 import MaterialDataTable from "./MaterialDataTable";
-import { DataTableWrapper } from "@/components/layouts/Wrappers";
-import { Paper, Stack } from "@mui/material";
 import { useState } from "react";
 import { Material } from "@/lib/types/all";
+import { Stack } from "@mui/material";
 
 interface MaterialMainProps {
   allMaterials: Material[];
@@ -24,11 +23,8 @@ const MaterialMain = ({ allMaterials }: MaterialMainProps) => {
       >
         <MaterialForm setOpenModel={setOpenMaterialAddModal} />
       </PageFormContainer>
-      <Paper>
-        <DataTableWrapper tableHeight={"78vh"} sx={{ p: { xs: 1, md: 2 } }}>
-          <MaterialDataTable allMaterials={allMaterials} />
-        </DataTableWrapper>
-      </Paper>
+
+      <MaterialDataTable allMaterials={allMaterials} />
     </Stack>
   );
 };

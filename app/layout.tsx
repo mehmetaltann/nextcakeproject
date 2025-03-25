@@ -10,8 +10,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const myFont = localFont({
-  src: "../lib/fonts/Roboto-Medium.ttf",
-  variable: "--font-roboto",
+  src: "../lib/fonts/Noto-Sans.ttf",
+  variable: "--font-notosans",
 });
 
 export const metadata: Metadata = {

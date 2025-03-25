@@ -1,4 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import DataTableFrame from "@/components/Tables/DataTableFrame";
 import { useCallback } from "react";
 import { IconButton } from "@mui/material";
 import { handleResponseMsg } from "@/utils/toast-helper";
@@ -6,7 +7,6 @@ import { toast } from "react-toastify";
 import { Material } from "@/lib/types/all";
 import { updateMaterial } from "@/app/actions/updateData";
 import { deleteMaterial } from "@/app/actions/deleteData";
-import DataTableFrame from "@/components/Tables/DataTableFrame";
 import {
   actionColumn,
   numberColumn,

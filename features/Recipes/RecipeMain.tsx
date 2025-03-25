@@ -3,9 +3,10 @@ import PageFormContainer from "@/components/PageFormContainer";
 import RecipeForm from "./RecipeForm";
 import RecipeDataTable from "./RecipeDataTable";
 import { RecipeExtented } from "@/lib/types/all";
-import { Paper, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useState } from "react";
-import { DataTableWrapper } from "@/components/layouts/Wrappers";
+
+import { Loader } from "@/components/layouts/Loader";
 
 interface RecipeMainProps {
   allRecipes: RecipeExtented[];
@@ -24,11 +25,11 @@ const RecipeMain = ({ allRecipes }: RecipeMainProps) => {
       >
         <RecipeForm setOpenModel={setOpenRecipeAddModal} />
       </PageFormContainer>
-      <Paper>
-        <DataTableWrapper tableHeight={"78vh"} sx={{ p: { xs: 1, md: 2 } }}>
-          <RecipeDataTable allRecipes={allRecipes} />
-        </DataTableWrapper>
-      </Paper>
+      {allRecipes && allRecipes.length > 0 ? (
+        <RecipeDataTable allRecipes={allRecipes} />
+      ) : (
+        <Loader />
+      )}
     </Stack>
   );
 };

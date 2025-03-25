@@ -1,6 +1,8 @@
+import CakeDataTableRow from "./CakeDataTableRow";
 import { Fragment, useState } from "react";
-import { CakeExtented, RecipeExtented } from "@/lib/types/all";
+import { CakeExtented } from "@/lib/types/all";
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -9,7 +11,6 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import CakeDataTableRow from "./CakeDataTableRow";
 
 interface CakeDataTableProps {
   allCakes: CakeExtented[];
@@ -32,7 +33,7 @@ const CakeDataTable = ({ allCakes }: CakeDataTableProps) => {
 
   return (
     <Fragment>
-      <TableContainer>
+      <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
           <TableHead>
             <TableRow>

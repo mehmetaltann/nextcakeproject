@@ -3,10 +3,14 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ModalButton from "@/components/modals/ModalButton";
 import MaterialToRecipeForm from "./MaterialToRecipeForm";
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { RecipeExtented } from "@/lib/types/all";
 import { handleResponseMsg } from "@/utils/toast-helper";
 import { toast } from "react-toastify";
+import {
+  deleteMaterialFromRecipe,
+  deleteRecipe,
+} from "@/app/actions/deleteData";
 import {
   Table,
   IconButton,
@@ -17,10 +21,6 @@ import {
   TableCell,
   Collapse,
 } from "@mui/material";
-import {
-  deleteMaterialFromRecipe,
-  deleteRecipe,
-} from "@/app/actions/deleteData";
 
 interface RecipeDataTableRowProps {
   data: RecipeExtented;
@@ -31,6 +31,18 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
   const { _id: recipeId, name, description, materials, totalCost } = data;
   const [openAddMtToRecModel, setOpenAddMtToRecModel] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const handleDeleteMaterialFromRecipe = useCallback(
+    async (materialId: string) => {
+      try {
+        const res = await deleteMaterialFromRecipe(recipeId, materialId);
+        handleResponseMsg(res);
+      } catch (error) {
+        toast.error("Bir hata oluştu. Lütfen tekrar deneyin." + error);
+      }
+    },
+    [recipeId]
+  );
 
   return (
     <Fragment>
@@ -44,16 +56,16 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row" width="3%">
+        <TableCell component="th" scope="row" width="2%">
           {recipeIndex + 1}
         </TableCell>
-        <TableCell align="left" width="25%">
+        <TableCell align="left" width="20%">
           {name}
         </TableCell>
         <TableCell
           align="left"
           sx={{ color: "secondary.main", fontWeight: 500 }}
-          width="15%"
+          width="10%"
         >
           {`${totalCost.toFixed(2)} TL`}
         </TableCell>
@@ -78,7 +90,7 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box
               sx={{ margin: 1 }}
@@ -87,14 +99,12 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
               <Table size="small" aria-label="materials">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left" width="1%">
-                      No
-                    </TableCell>
-                    <TableCell align="left">İsim</TableCell>
+                    <TableCell align="left">No</TableCell>
+                    <TableCell align="left">Malzeme</TableCell>
                     <TableCell align="left">Miktar</TableCell>
                     <TableCell align="left">Birim</TableCell>
                     <TableCell align="left">Maliyet</TableCell>
-                    <TableCell align="left">Malzeme Sil</TableCell>
+                    <TableCell align="left">Sil</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -115,7 +125,6 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
                         <TableCell>{amount}</TableCell>
                         <TableCell>{unit}</TableCell>
                         <TableCell
-                          align="left"
                           sx={{ color: "secondary.main", fontWeight: 500 }}
                         >
                           {`${cost.toFixed(2)} TL`}
@@ -124,20 +133,9 @@ const RecipeDataTableRow = ({ data, recipeIndex }: RecipeDataTableRowProps) => {
                           <IconButton
                             size="small"
                             color="secondary"
-                            onClick={async () => {
-                              try {
-                                const res = await deleteMaterialFromRecipe(
-                                  recipeId,
-                                  materialId
-                                );
-                                handleResponseMsg(res);
-                              } catch (error) {
-                                toast.error(
-                                  "Bir hata oluştu. Lütfen tekrar deneyin." +
-                                    error
-                                );
-                              }
-                            }}
+                            onClick={() =>
+                              handleDeleteMaterialFromRecipe(materialId)
+                            }
                           >
                             <DeleteIcon />
                           </IconButton>

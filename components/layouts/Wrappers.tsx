@@ -3,7 +3,7 @@ import { SxProps, Theme } from "@mui/system";
 
 interface PageWrapperProps {
   children: React.ReactNode;
-  conSx?: SxProps<Theme>; 
+  conSx?: SxProps<Theme>;
   [key: string]: any;
 }
 
@@ -21,30 +21,6 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
       >
         {children}
       </Container>
-    </Box>
-  );
-};
-
-type DataTableWrapperProps = {
-  children: React.ReactNode;
-  tableHeight?: string | number;
-  sx?: SxProps;
-};
-
-export const DataTableWrapper: React.FC<DataTableWrapperProps> = ({
-  children,
-  tableHeight,
-  sx,
-}) => {
-  return (
-    <Box
-      sx={{
-        height: tableHeight,
-        width: "100%",
-        ...sx,
-      }}
-    >
-      {children}
     </Box>
   );
 };

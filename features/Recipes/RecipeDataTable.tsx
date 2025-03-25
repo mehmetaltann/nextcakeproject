@@ -1,7 +1,8 @@
+import RecipeDataTableRow from "./RecipeDataTableRow";
 import { Fragment, useState } from "react";
 import { RecipeExtented } from "@/lib/types/all";
-import RecipeDataTableRow from "./RecipeDataTableRow";
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -32,7 +33,7 @@ const RecipeDataTable = ({ allRecipes }: RecipeDataTableProps) => {
 
   return (
     <Fragment>
-      <TableContainer>
+      <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
           <TableHead>
             <TableRow>

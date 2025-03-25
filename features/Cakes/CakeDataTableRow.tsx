@@ -91,19 +91,25 @@ const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row" width="2%">
           {cakeIndex + 1}
         </TableCell>
-        <TableCell align="left">{name}</TableCell>
-        <TableCell align="left">{size}</TableCell>
+        <TableCell align="left" width="20%">
+          {name}
+        </TableCell>
+        <TableCell align="left" width="15%">
+          {size}
+        </TableCell>
         <TableCell
           align="left"
           sx={{ color: "secondary.main", fontWeight: 500 }}
-          width="15%"
+          width="10%"
         >
           {`${totalCost.toFixed(2)} TL`}
         </TableCell>
-        <TableCell align="left">{description}</TableCell>
+        <TableCell align="left" width="20%">
+          {description}
+        </TableCell>
         <TableCell align="left">
           <IconButton size="small" color="secondary" onClick={handleDeleteCake}>
             <DeleteIcon />
@@ -112,30 +118,18 @@ const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
       </TableRow>
 
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Table size="small" aria-label="materials">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left" width="2%">
-                      No
-                    </TableCell>
-                    <TableCell align="left" width="20%">
-                      İsim
-                    </TableCell>
-                    <TableCell align="left" width="7%">
-                      Miktar
-                    </TableCell>
-                    <TableCell align="left" width="7%">
-                      Birim
-                    </TableCell>
-                    <TableCell align="left" width="12%">
-                      Maliyet
-                    </TableCell>
-                    <TableCell align="left" width="7%">
-                      Tarif Sil
-                    </TableCell>
+                    <TableCell align="left">No</TableCell>
+                    <TableCell align="left">İsim</TableCell>
+                    <TableCell align="left">Miktar</TableCell>
+                    <TableCell align="left">Birim</TableCell>
+                    <TableCell align="left">Maliyet</TableCell>
+                    <TableCell align="left">Tarif Sil</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
