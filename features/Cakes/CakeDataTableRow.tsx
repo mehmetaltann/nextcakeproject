@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 import {
   deleteCake,
   deleteMaterialFromCake,
-  deleteMaterialFromRecipe,
   deleteRecipeFromCake,
 } from "@/app/actions/deleteData";
 import {
@@ -33,6 +32,7 @@ interface CakeDataTableRowProps {
 const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
   const {
     _id: cakeId,
+    size,
     name,
     description,
     materials,
@@ -82,16 +82,20 @@ const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
     <Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell width="2%">
-          <IconButton color="secondary" size="small" onClick={handleToggle}>
+          <IconButton
+            aria-label="expand row"
+            color="secondary"
+            size="small"
+            onClick={handleToggle}
+          >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row" width="3%">
+        <TableCell component="th" scope="row">
           {cakeIndex + 1}
         </TableCell>
-        <TableCell align="left" width="25%">
-          {name}
-        </TableCell>
+        <TableCell align="left">{name}</TableCell>
+        <TableCell align="left">{size}</TableCell>
         <TableCell
           align="left"
           sx={{ color: "secondary.main", fontWeight: 500 }}
@@ -99,9 +103,7 @@ const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
         >
           {`${totalCost.toFixed(2)} TL`}
         </TableCell>
-        <TableCell align="left" width="20%">
-          {description}
-        </TableCell>
+        <TableCell align="left">{description}</TableCell>
         <TableCell align="left">
           <IconButton size="small" color="secondary" onClick={handleDeleteCake}>
             <DeleteIcon />
@@ -110,7 +112,7 @@ const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
       </TableRow>
 
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Table size="small" aria-label="materials">
@@ -204,12 +206,9 @@ const CakeDataTableRow = ({ data, cakeIndex }: CakeDataTableRowProps) => {
       </TableRow>
 
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box
-              sx={{ margin: 1 }}
-              className={open ? "collapse-content open" : "collapse-content"}
-            >
+            <Box sx={{ margin: 1 }}>
               <Table size="small" aria-label="materials">
                 <TableHead>
                   <TableRow>

@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import {
   CakeWithoutId,
   MaterialWithoutId,
+  ParameterWithoutId,
   RecipeWithoutId,
 } from "@/lib/types/all";
 
@@ -183,20 +184,48 @@ export const addRecipeToCake = async (
 };
 
 export const addParameter = async (
-  variant: string,
-  content: { title: string; value: string }[]
+  parameterData: ParameterWithoutId
 ): Promise<{ msg: string; status: boolean }> => {
   try {
     await dbConnect();
-    const newParameter = new ParameterModel({
-      variant,
-      content,
-    });
-
+    const newParameter = new ParameterModel(parameterData);
     await newParameter.save();
     revalidatePath("/parameters");
     return {
       msg: "Yeni parametre başarıyla eklendi",
+      status: true,
+    };
+  } catch (error) {
+    console.error("Parametre eklenirken hata oluştu:", error);
+    return {
+      msg: `Parametre eklenirken hata oluştu: ${
+        error instanceof Error ? error.message : "Bilinmeyen hata"
+      }`,
+      status: false,
+    };
+  }
+};
+
+export const addContentToParameter = async (
+  parameterId: string,
+  title: string,
+  value: string
+): Promise<{ msg: string; status: boolean }> => {
+  try {
+    await dbConnect();
+    const filter = { _id: parameterId };
+    const updateData = {
+      title,
+      value,
+    };
+
+    await ParameterModel.findByIdAndUpdate(filter, {
+      $push: { content: updateData },
+    });
+
+    revalidatePath("/parameters");
+    return {
+      msg: "Parametre başarıyla eklendi",
       status: true,
     };
   } catch (error) {

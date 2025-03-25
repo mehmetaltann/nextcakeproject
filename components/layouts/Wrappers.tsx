@@ -1,8 +1,9 @@
-import { Box, Container, SxProps } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import { SxProps, Theme } from "@mui/system";
 
 interface PageWrapperProps {
   children: React.ReactNode;
-  conSx?: React.CSSProperties;
+  conSx?: SxProps<Theme>; 
   [key: string]: any;
 }
 

@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export type Material = {
   _id: string;
   name: string;
@@ -91,11 +93,19 @@ export type CakeExtented = {
   totalCost: Number;
 };
 
+export type ParameterContent = {
+  _id: string;
+  title: string;
+  value: string;
+};
+
 export type Parameter = {
   _id: string;
   variant: string;
-  content: Array<{
-    title: string;
-    value: string;
-  }>;
+  content: ParameterContent[];
+};
+
+export type ParameterWithoutId = {
+  variant: string;
+  content: ParameterContent[];
 };

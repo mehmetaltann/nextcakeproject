@@ -25,7 +25,6 @@ interface Page {
 }
 
 const pages: Page[] = [
-  { title: "Anasayfa", link: "/" },
   { title: "Ürünler", link: "cakes" },
   { title: "Tarifler", link: "recipes" },
   { title: "Malzemeler", link: "materials" },

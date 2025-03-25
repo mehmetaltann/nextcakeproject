@@ -61,34 +61,28 @@ export const deleteRecipe = async (
 export const deleteCake = async (cakeId: string) => {
   try {
     await dbConnect();
-    const cake = await CakeModel.findById(cakeId)
-      .populate("recipes.recipe")
-      .populate("materials.material");
+    const cake = await CakeModel.findById(cakeId);
+
     if (!cake) {
-      return { status: false, msg: "Cake bulunamadı" };
+      return { status: false, msg: "Pasta bulunamadı" };
     }
-    if (
-      (cake.recipes && cake.recipes.length > 0) ||
-      (cake.materials && cake.materials.length > 0)
-    ) {
-      console.error(
-        "Bu Cake içinde recipe veya material bulunduğu için silinemez."
-      );
+
+    if ((cake.recipes ?? []).length > 0 || (cake.materials ?? []).length > 0) {
       return {
         status: false,
-        msg: "Bu Cake içinde recipe veya material bulunduğu için silinemez.",
+        msg: "Bu Pasta içinde tarif veya malzeme bulunduğu için silinemez.",
       };
     }
     const result = await CakeModel.findByIdAndDelete(cakeId);
 
     if (!result) {
-      console.error("Cake silinirken bir hata oluştu.");
-      return { status: false, msg: "Cake silinirken bir hata oluştu." };
+      console.error("Pasta silinirken bir hata oluştu.");
+      return { status: false, msg: "Pasta silinirken bir hata oluştu." };
     }
     revalidatePath("/cakes");
-    return { status: true, msg: "Cake başarıyla silindi." };
+    return { status: true, msg: "Pasta başarıyla silindi." };
   } catch (error) {
-    console.error("Cake silinirken bir hata oluştu:", error);
+    console.error("Pasta silinirken bir hata oluştu:", error);
     return {
       status: false,
       msg: "Silme işlemi sırasında bir hata oluştu.",
@@ -169,12 +163,10 @@ export const deleteParameter = async (
   parameterId: string
 ): Promise<{ msg: string; status: boolean }> => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/your-database-name");
-
+    await dbConnect();
     const deletedParameter = await ParameterModel.findByIdAndDelete(
       parameterId
     );
-
     if (!deletedParameter) {
       return {
         msg: "Silinecek parametre bulunamadı.",
@@ -196,10 +188,24 @@ export const deleteParameter = async (
     };
   }
 };
-function findByIdAndUpdate(
-  SemiProductSchema: any,
-  filter: { _id: string },
-  arg2: { $pull: { materials: { _id: string } } }
-) {
-  throw new Error("Function not implemented.");
-}
+
+export const deleteContentFromParameter = async (
+  parameterId: string,
+  contentId: string
+) => {
+  try {
+    await dbConnect();
+    const filter = { _id: parameterId };
+    const updateData = {
+      _id: contentId,
+    };
+    await ParameterModel.findByIdAndUpdate(filter, {
+      $pull: { content: updateData },
+    });
+    revalidatePath("/parameters");
+    return { status: true, msg: "Parametre başarıyla silindi." };
+  } catch (error) {
+    console.error("Parametre silinirken bir hata oluştu:", error);
+    return { status: false, msg: "Parametre silinirken bir hata oluştu." };
+  }
+};

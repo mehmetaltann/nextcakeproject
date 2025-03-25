@@ -7,7 +7,6 @@ import { Loader } from "@/components/layouts/Loader";
 
 export default async function Recipes() {
   const allRecipes = (await getRecipes()) as RecipeExtented[];
-  console.log(allRecipes)
 
   return (
     <>
