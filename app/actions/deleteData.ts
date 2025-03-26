@@ -11,10 +11,20 @@ export const deleteMaterial = async (
 ): Promise<{ msg: string; status: boolean }> => {
   try {
     await dbConnect();
-    const result = await MaterialModel.findByIdAndDelete(materialId);
-    if (!result) {
-      return { status: false, msg: "Material bulunamadı" };
+    const isUsedInRecipe = await RecipeModel.exists({
+      "materials.materialId": materialId,
+    });
+
+    const isUsedInCake = await CakeModel.exists({
+      "materials.materialId": materialId,
+    });
+    if (isUsedInRecipe || isUsedInCake) {
+      return {
+        status: false,
+        msg: "Bu malzeme bir tarifte veya pastada kullanıldığı için silinemez.",
+      };
     }
+    await MaterialModel.findByIdAndDelete(materialId);
     revalidatePath("/materials");
     return { status: true, msg: "Material başarıyla silindi." };
   } catch (error) {
@@ -40,17 +50,24 @@ export const deleteRecipe = async (
     if ((recipe.materials ?? []).length > 0) {
       return {
         status: false,
-        msg: "Bu Recipe'de material bulunduğu için silinemez.",
+        msg: "Bu tarifte malzeme bulunduğu için silinemez.",
       };
     }
+    const isUsedInCake = await CakeModel.exists({
+      "recipes.recipeId": recipeId,
+    });
 
+    if (isUsedInCake) {
+      return {
+        status: false,
+        msg: "Bu tarif pastada kullanıldığı için silinemez.",
+      };
+    }
     const deletedRecipe = await RecipeModel.findByIdAndDelete(recipeId);
     if (!deletedRecipe) {
       return { status: false, msg: "Recipe zaten silinmiş veya bulunamadı." };
     }
-
     revalidatePath("/recipes");
-
     return { status: true, msg: "Recipe başarıyla silindi." };
   } catch (error) {
     console.error("Recipe silme hatası:", error);
@@ -107,7 +124,6 @@ export const deleteMaterialFromRecipe = async (
 
     revalidatePath("/recipes");
     revalidatePath("/cakes");
-    revalidatePath("/");
     return { status: true, msg: "Malzeme başarıyla silindi." };
   } catch (error) {
     console.error("Malzeme silinirken bir hata oluştu:", error);

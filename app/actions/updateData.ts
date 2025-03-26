@@ -12,7 +12,7 @@ export const updateMaterial = async (
 
     const existingMaterial = await MaterialModel.findById(updateData._id);
     if (!existingMaterial) {
-      return { msg: "Material bulunamadı", status: false };
+      return { msg: "Malzeme bulunamadı", status: false };
     }
 
     await MaterialModel.findByIdAndUpdate(
@@ -23,16 +23,15 @@ export const updateMaterial = async (
     revalidatePath("/recipes");
     revalidatePath("/cakes");
     revalidatePath("/materials");
-    revalidatePath("/");
 
     return {
-      msg: "Material başarıyla güncellendi",
+      msg: "Malzeme başarıyla güncellendi",
       status: true,
     };
   } catch (error) {
-    console.error("Material güncellenirken bir hata oluştu:", error);
+    console.error("Malzeme güncellenirken bir hata oluştu:", error);
     return {
-      msg: `Material güncellenirken hata oluştu: ${
+      msg: `Malzeme güncellenirken hata oluştu: ${
         error instanceof Error ? error.message : "Bilinmeyen hata"
       }`,
       status: false,

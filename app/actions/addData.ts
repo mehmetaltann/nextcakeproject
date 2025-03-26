@@ -21,8 +21,9 @@ export const addMaterial = async (
     await dbConnect();
     const newMaterial = new MaterialModel(materialData);
     await newMaterial.save();
-    revalidatePath("/");
     revalidatePath("/materials");
+    revalidatePath("/recipes");
+    revalidatePath("/cakes");
     return {
       msg: "Yeni Malzeme başarıyla eklendi",
       status: true,
@@ -104,6 +105,7 @@ export const addMaterialToRecipe = async (
     });
 
     revalidatePath("/recipes");
+    revalidatePath("/cakes");
     return { msg: "Material başarıyla tarife eklendi", status: true };
   } catch (error) {
     console.error("Recipe içerisine material eklenirken hata oluştu:", error);

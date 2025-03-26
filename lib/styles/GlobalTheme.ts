@@ -12,6 +12,6 @@ export const GlobalTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "var(--font-roboto)",
+    fontFamily: "var(--font-notosans)",
   },
 });
